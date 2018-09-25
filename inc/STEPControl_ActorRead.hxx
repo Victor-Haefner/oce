@@ -63,7 +63,7 @@ class STEPControl_ActorRead : public Transfer_ActorOfTransientProcess
 public:
 
   
-  Standard_EXPORT STEPControl_ActorRead();
+  Standard_EXPORT STEPControl_ActorRead( void(*callback)(int,int,int) = 0 );
   
   Standard_EXPORT virtual   Standard_Boolean Recognize (const Handle(Standard_Transient)& start) ;
   
@@ -136,6 +136,7 @@ private:
   Standard_Real myPrecision;
   Standard_Real myMaxTol;
   Handle(StepRepr_Representation) mySRContext;
+  void(*updateCallback)(int,int,int);
 
 
 };

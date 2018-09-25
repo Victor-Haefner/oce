@@ -67,11 +67,11 @@ public:
 
   
   //! Creates a reader object with an empty STEP model.
-  Standard_EXPORT STEPControl_Reader();
+  Standard_EXPORT STEPControl_Reader( void(*callback)(int,int,int) = 0 );
   
   //! Creates a Reader for STEP from an already existing Session
   //! Clears the session if it was not yet set for STEP
-  Standard_EXPORT STEPControl_Reader(const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
+  Standard_EXPORT STEPControl_Reader(const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True, void(*callback)(int,int,int) = 0 );
   
   //! Returns the model as a StepModel.
   //! It can then be consulted (header, product)

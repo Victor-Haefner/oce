@@ -57,7 +57,7 @@
 #include <IFSelect_SelectModelRoots.hxx>
 
 
-STEPControl_Controller::STEPControl_Controller ()
+STEPControl_Controller::STEPControl_Controller ( void(*cb)(int,int,int) )
      : XSControl_Controller ("STEP", "step")
 {
   static Standard_Boolean init = Standard_False;
@@ -204,7 +204,7 @@ STEPControl_Controller::STEPControl_Controller ()
   theAdaptorLibrary  = swl;
   theAdaptorProtocol =  STEPEdit::Protocol();
 //  theAdaptorProtocol =  StepAP214::Protocol();
-  theAdaptorRead     = new STEPControl_ActorRead;  // par ex pour Recognize
+  theAdaptorRead     = new STEPControl_ActorRead(cb);  // par ex pour Recognize
 
   SetModeWrite (0,4);
   SetModeWriteHelp (0,"As Is");
@@ -333,11 +333,11 @@ IFSelect_ReturnStatus  STEPControl_Controller::TransferWriteShape
   return XSControl_Controller::TransferWriteShape (shape,FP,model,modeshape);
 }
 
-Standard_Boolean STEPControl_Controller::Init ()
+Standard_Boolean STEPControl_Controller::Init (void(*cb)(int,int,int))
 {
   static Standard_Boolean inic = Standard_False;
   if (!inic) {
-    Handle(STEPControl_Controller) STEPCTL = new STEPControl_Controller;
+    Handle(STEPControl_Controller) STEPCTL = new STEPControl_Controller(cb);
     STEPCTL->AutoRecord();  // avec les noms donnes a la construction
     XSAlgo::Init();                                                                                                        
     inic = Standard_True;

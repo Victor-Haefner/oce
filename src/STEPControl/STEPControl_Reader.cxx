@@ -74,9 +74,9 @@
 //purpose  : 
 //=======================================================================
 
-STEPControl_Reader::STEPControl_Reader ()
+STEPControl_Reader::STEPControl_Reader ( void(*cb)(int,int,int) )
 {
-  STEPControl_Controller::Init();
+  STEPControl_Controller::Init(cb);
   SetNorm ("STEP");
 }
 
@@ -86,9 +86,9 @@ STEPControl_Reader::STEPControl_Reader ()
 //=======================================================================
 
 STEPControl_Reader::STEPControl_Reader
-  (const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch)
+  (const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch, void(*cb)(int,int,int))
 {
-  STEPControl_Controller::Init();
+  STEPControl_Controller::Init(cb);
   SetWS (WS,scratch);
   SetNorm ("STEP");
 }

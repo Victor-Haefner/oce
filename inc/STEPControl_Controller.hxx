@@ -34,7 +34,7 @@ public:
   
   //! Initializes the use of STEP Norm (the first time) and
   //! returns a Controller
-  Standard_EXPORT STEPControl_Controller();
+  Standard_EXPORT STEPControl_Controller( void(*callback)(int,int,int) = 0 );
   
   //! Creates a new empty Model ready to receive data of the Norm.
   //! It is taken from STEP Template Model
@@ -57,7 +57,7 @@ public:
   //! Standard Initialisation. It creates a Controller for STEP
   //! and records it to various names, available to select it later
   //! Returns True when done, False if could not be done
-  Standard_EXPORT static   Standard_Boolean Init() ;
+  Standard_EXPORT static   Standard_Boolean Init( void(*callback)(int,int,int) = 0 ) ;
 
 
 

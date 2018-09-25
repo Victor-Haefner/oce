@@ -68,11 +68,11 @@ public:
   //! Creates a reader with an empty
   //! STEP model and sets ColorMode, LayerMode, NameMode and
   //! PropsMode to Standard_True.
-  Standard_EXPORT STEPCAFControl_Reader();
+  Standard_EXPORT STEPCAFControl_Reader(void(*callback)(int,int,int) = 0);
   
   //! Creates a reader tool and attaches it to an already existing Session
   //! Clears the session if it was not yet set for STEP
-  Standard_EXPORT STEPCAFControl_Reader(const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
+  Standard_EXPORT STEPCAFControl_Reader(const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True, void(*callback)(int,int,int) = 0);
   
   //! Clears the internal data structures and attaches to a new session
   //! Clears the session if it was not yet set for STEP
@@ -250,6 +250,7 @@ private:
   Standard_Boolean mySHUOMode;
   Standard_Boolean myGDTMode;
   Standard_Boolean myMatMode;
+  void(*updateCallback)(int,int,int);
 
 
 };

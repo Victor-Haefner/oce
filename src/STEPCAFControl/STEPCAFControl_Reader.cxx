@@ -217,15 +217,17 @@ static TDF_Label AllocateSubLabel(TDF_Label& theRoot)
 //purpose  : 
 //=======================================================================
 
-STEPCAFControl_Reader::STEPCAFControl_Reader ():
+STEPCAFControl_Reader::STEPCAFControl_Reader ( void(*cb)(int,int,int) ):
+       myReader( cb ),
        myColorMode( Standard_True ),
        myNameMode ( Standard_True ),
        myLayerMode( Standard_True ),
        myPropsMode( Standard_True ),
-	   mySHUOMode ( Standard_False ),
+       mySHUOMode ( Standard_False ),
        myGDTMode  ( Standard_True ),
        myMatMode  ( Standard_True )
 {
+  updateCallback = cb;
   STEPCAFControl_Controller::Init();
   myFiles = new STEPCAFControl_DictionaryOfExternFile;
 }
@@ -237,15 +239,17 @@ STEPCAFControl_Reader::STEPCAFControl_Reader ():
 //=======================================================================
 
 STEPCAFControl_Reader::STEPCAFControl_Reader (const Handle(XSControl_WorkSession)& WS,
-                                              const Standard_Boolean scratch) :
+                                              const Standard_Boolean scratch, void(*cb)(int,int,int) ) :
+       myReader( cb ),
        myColorMode( Standard_True ),
        myNameMode ( Standard_True ),
        myLayerMode( Standard_True ),
        myPropsMode( Standard_True ),
-	   mySHUOMode ( Standard_False ),
+       mySHUOMode ( Standard_False ),
        myGDTMode  ( Standard_True ),
        myMatMode  ( Standard_True )
 {
+  updateCallback = cb;
   STEPCAFControl_Controller::Init();
   Init ( WS, scratch );
 }
@@ -422,11 +426,15 @@ Standard_Boolean STEPCAFControl_Reader::Transfer (STEPControl_Reader &reader,
   Standard_Integer num = reader.NbRootsForTransfer();
   if ( num <=0 ) return Standard_False;
   if ( nroot ) {
+    if (updateCallback) (*updateCallback)(1,1,1);
     if ( nroot > num ) return Standard_False;
     reader.TransferOneRoot ( nroot );
   }
   else {
-    for ( i=1; i <= num; i++ ) reader.TransferOneRoot ( i );
+    for ( i=1; i <= num; i++ ) {
+    	if (updateCallback) (*updateCallback)(1,num,1);
+	reader.TransferOneRoot ( i );
+    }
   }
   num = reader.NbShapes();
   if ( num <=0 ) return Standard_False;
@@ -448,6 +456,7 @@ Standard_Boolean STEPCAFControl_Reader::Transfer (STEPControl_Reader &reader,
   Handle(TColStd_HSequenceOfTransient) SeqPDS = new TColStd_HSequenceOfTransient;
 
   for (i = 1; i <= nb; i ++) {
+    if (updateCallback) (*updateCallback)(1,nb,2);
     Handle(Standard_Transient) enti = Model->Value(i);
     if(enti->IsKind(STANDARD_TYPE(StepRepr_ProductDefinitionShape))) {
       // sequence for acceleration ReadMaterials
@@ -491,6 +500,7 @@ Standard_Boolean STEPCAFControl_Reader::Transfer (STEPControl_Reader &reader,
   STEPConstruct_ExternRefs ExtRefs ( reader.WS() );
   ExtRefs.LoadExternRefs();
   for ( i=1; i <= ExtRefs.NbExternRefs(); i++ ) {
+    if (updateCallback) (*updateCallback)(1,ExtRefs.NbExternRefs(),3);
     // check extern ref format
     Handle(TCollection_HAsciiString) format = ExtRefs.Format(i);
     if ( ! format.IsNull() ) {
@@ -553,45 +563,55 @@ Standard_Boolean STEPCAFControl_Reader::Transfer (STEPControl_Reader &reader,
   Handle(XCAFDoc_ShapeTool) STool = XCAFDoc_DocumentTool::ShapeTool( doc->Main() );
   if ( STool.IsNull() ) return Standard_False;
   XCAFDoc_DataMapOfShapeLabel map;
-  if ( asOne )
+  if ( asOne ) {
     Lseq.Append ( AddShape ( reader.OneShape(), STool, NewShapesMap, ShapePDMap, PDFileMap, map ) );
-  else {
+    if (updateCallback) (*updateCallback)(1,1,4);
+  } else {
     for ( i=1; i <= num; i++ ) {
       Lseq.Append ( AddShape ( reader.Shape(i), STool, NewShapesMap, ShapePDMap, PDFileMap, map ) );
+      if (updateCallback) (*updateCallback)(1,num,4);
     }
   }
   
   // read colors
   if ( GetColorMode() )
     ReadColors ( reader.WS(), doc, PDFileMap, map );
+  if (updateCallback) (*updateCallback)(1,8,5);
   
   // read names
   if ( GetNameMode() )
     ReadNames ( reader.WS(), doc, PDFileMap, map );
+  if (updateCallback) (*updateCallback)(1,8,5);
 
   // read validation props
   if ( GetPropsMode() )
     ReadValProps ( reader.WS(), doc, PDFileMap, map );
+  if (updateCallback) (*updateCallback)(1,8,5);
 
   // read layers
   if ( GetLayerMode() )
     ReadLayers ( reader.WS(), doc );
+  if (updateCallback) (*updateCallback)(1,8,5);
   
   // read SHUO entities from STEP model
   if ( GetSHUOMode() )
     ReadSHUOs ( reader.WS(), doc, PDFileMap, map );
+  if (updateCallback) (*updateCallback)(1,8,5);
 
   // read GDT entities from STEP model
   if(GetGDTMode())
     ReadGDTs(reader.WS(),doc);
+  if (updateCallback) (*updateCallback)(1,8,5);
 
   // read Material entities from STEP model
   if(GetMatMode())
     ReadMaterials(reader.WS(),doc,SeqPDS);
+  if (updateCallback) (*updateCallback)(1,8,5);
 
   // Expand resulting CAF structure for sub-shapes (optionally with their
   // names) if requested
   ExpandSubShapes(STool, map, ShapePDMap);
+  if (updateCallback) (*updateCallback)(1,8,5);
 
   return Standard_True;
 }

@@ -202,7 +202,7 @@ namespace {
 // Purpose : Empty constructor
 // ============================================================================
 
-STEPControl_ActorRead::STEPControl_ActorRead() {}
+STEPControl_ActorRead::STEPControl_ActorRead( void(*cb)(int,int,int) ) : updateCallback(cb) {}
 
 // ============================================================================
 // Method  : STEPControl_ActorRead::Recognize
@@ -809,6 +809,8 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity(const Han
   // [END] Proceed with non-manifold topology (ssv; 12.11.2010)
 
   for (i = 1; i <= nb && PS.More(); i ++,PS.Next()) {
+    if (updateCallback) (*updateCallback)(1,nb,15);
+    
   //for (i = 1; i <= nb ; i ++) {
     #ifdef TRANSLOG
     if (TP->TraceLevel() > 2) 
