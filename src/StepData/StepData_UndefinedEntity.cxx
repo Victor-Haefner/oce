@@ -64,6 +64,7 @@ void StepData_UndefinedEntity::ReadRecord(const Handle(StepData_StepReaderData)&
       }
       else {
 	anent = SR->BoundEntity(nume);
+	if (anent.IsNull()) anent = new StepData_UndefinedEntity (Standard_True);
       }
     }
     else if (partyp == Interface_ParamSub) {
