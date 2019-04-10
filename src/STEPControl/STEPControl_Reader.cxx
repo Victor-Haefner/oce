@@ -124,6 +124,7 @@ Standard_Integer STEPControl_Reader::NbRootsForTransfer()
   therootsta = Standard_True;
 
   //theroots.Clear();
+  if (!Model()) return 0;
   Standard_Integer nb = Model()->NbEntities();
   for (Standard_Integer i = 1; i <= nb; i ++) {
     Handle(Standard_Transient) ent = Model()->Value(i);

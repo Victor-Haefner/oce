@@ -1546,6 +1546,7 @@ void StepData_StepReaderData::SetEntityNumbers(const Standard_Boolean withmap)
 	} else {                          // NON RESOLU, si pas pbmap, le dire
 	  FP.SetEntityNumber(-id);
 	  if (pbmap) continue;            // pbmap : on se retrouvera
+          if (id == -1) continue;
 	  char failmess[100];
 //  ...  Construire le Check  ...
 	  sprintf(failmess,
