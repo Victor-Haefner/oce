@@ -296,11 +296,13 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
   for (j=1; j<=NbEdge; j++ ) {
     OrEdge1  = EL->EdgeListValue(j);
     if ( OrEdge1.IsNull() ) continue;  // not treated
-
     StepEdge = OrEdge1->EdgeElement();
+    if (StepEdge.IsNull()) continue;
 //    if(j>1 && StepEdge == StepEdge1) theSame++; //gka 15.12.98
     StepEdge1 = StepEdge;                         //
     Handle(StepShape_EdgeCurve) EC = Handle(StepShape_EdgeCurve)::DownCast(StepEdge);
+    if (EC.IsNull()) continue;
+    
     Handle(StepGeom_Curve) C = EC->EdgeGeometry();
     if (!C.IsNull()){
       if (C->IsKind(STANDARD_TYPE(StepGeom_SurfaceCurve))) {
@@ -411,6 +413,7 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
       Handle(StepShape_EdgeCurve)::DownCast ( OrEdge1->EdgeElement() );
     Handle(StepShape_EdgeCurve) EC2 = 
       Handle(StepShape_EdgeCurve)::DownCast ( OrEdge2->EdgeElement() );
+    if ( EC1.IsNull() || EC2.IsNull() ) continue;  // not treated
 
     Handle(StepShape_Vertex) Vs1, Vs2,Vs11,Vs22;
     Vs1 = ( OrEdge1->Orientation() ? EC1->EdgeEnd() : EC1->EdgeStart() );
@@ -461,7 +464,9 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
     OrEdge1  = EL->EdgeListValue(j);
     if ( OrEdge1.IsNull() ) continue;  // not treated
     StepEdge = OrEdge1->EdgeElement();
+    if (StepEdge.IsNull()) continue;
     Handle(StepShape_EdgeCurve) EC = Handle(StepShape_EdgeCurve)::DownCast(StepEdge);
+    if (EC.IsNull()) continue;
     
     // ----------------
     // Map the StepEdge

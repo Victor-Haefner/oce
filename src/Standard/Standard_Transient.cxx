@@ -50,21 +50,21 @@ Standard_Boolean Standard_Transient::IsInstance(const Handle(Standard_Type) &ATy
 //
 Standard_Boolean Standard_Transient::IsInstance(const Standard_CString theTypeName) const
 {
-  return IsSimilar ( DynamicType()->Name(), theTypeName );
+  return DynamicType() ? IsSimilar ( DynamicType()->Name(), theTypeName ) : false;
 }
 
 //
 //
 Standard_Boolean Standard_Transient::IsKind (const Handle(Standard_Type)& aType) const
 {
-  return DynamicType()->SubType ( aType );
+  return DynamicType() ? DynamicType()->SubType ( aType ) : false;
 }
 
 //
 //
 Standard_Boolean Standard_Transient::IsKind (const Standard_CString theTypeName) const
 {
-  return DynamicType()->SubType ( theTypeName );
+  return DynamicType() ? DynamicType()->SubType ( theTypeName ) : false;
 }
 
 void Standard_Transient::Delete() const

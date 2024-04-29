@@ -251,7 +251,9 @@ void StepToTopoDS_TranslateFace::Init
     cout << "    Processing Wire : " << i << endl;
 #endif    
     FaceBound = FS->BoundsValue(i);
+    if (!FaceBound) continue;
     Loop      = FaceBound->Bound();
+    if (!Loop) continue;
     
     // ------------------------
     // The Loop is a VertexLoop
