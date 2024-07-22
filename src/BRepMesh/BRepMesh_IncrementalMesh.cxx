@@ -206,6 +206,7 @@ void BRepMesh_IncrementalMesh::Perform()
 void BRepMesh_IncrementalMesh::update()
 {
   int n = myFaces.Size();
+  if (!myMesh) return;
 
   // Update edges data
   TopExp_Explorer aExplorer(myShape, TopAbs_EDGE);
@@ -341,6 +342,7 @@ void BRepMesh_IncrementalMesh::update(const TopoDS_Edge& theEdge)
 {
   if (!myEdges.IsBound(theEdge))
     myEdges.Bind(theEdge, BRepMesh::DMapOfTriangulationBool());
+  if (!myMesh) return;
 
   Standard_Real aEdgeDeflection = edgeDeflection(theEdge);
   // Check that triangulation relies to face of the given shape.
@@ -457,6 +459,7 @@ void BRepMesh_IncrementalMesh::update(const TopoDS_Face& theFace)
   if (!toBeMeshed(theFace, Standard_True))
     return;
 
+  if (!myMesh) return;
   myModified = Standard_True;
   Standard_Integer aStatus = myMesh->Add(theFace);
 
@@ -512,6 +515,7 @@ void BRepMesh_IncrementalMesh::commit()
 //=======================================================================
 void BRepMesh_IncrementalMesh::commitEdges(const TopoDS_Face& theFace)
 {
+  if (!myMesh) return;
   TopoDS_Face aFace = theFace;
   aFace.Orientation(TopAbs_FORWARD);
 

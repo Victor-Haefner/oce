@@ -263,7 +263,6 @@ Standard_Integer BRepMesh_FastDiscret::Add(const TopoDS_Face& theFace)
     {
       myAttribute = new BRepMesh_FaceAttribute(theFace,
         myBoundaryVertices, myBoundaryPoints);
-
       myAttributes.Bind(theFace, myAttribute);
     }
 
@@ -645,14 +644,16 @@ Standard_Integer BRepMesh_FastDiscret::Add(const TopoDS_Face& theFace)
   }
   catch(Standard_Failure)
   {
-    myAttribute->SetStatus(BRepMesh_Failure);
+    if (myAttribute) myAttribute->SetStatus(BRepMesh_Failure);
   }
 
-  myAttribute->ChangeMeshNodes() = 
-    myAttribute->ChangeStructure()->Data()->Vertices();
-
-  myAttribute->ChangeStructure().Nullify();
-  return myAttribute->GetStatus();
+  if (myAttribute) {
+    myAttribute->ChangeMeshNodes() = 
+      myAttribute->ChangeStructure()->Data()->Vertices();
+    myAttribute->ChangeStructure().Nullify();
+    return myAttribute->GetStatus();
+  }
+  else return BRepMesh_Failure;
 }
 
 //=======================================================================

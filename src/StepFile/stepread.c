@@ -114,6 +114,7 @@ int stepread ()
   steprestart(stepin);
   letat = stepparse() ;
   rec_finfile() ;
+  if (letat == 1) printf("Error while parsing STEP file, at line %i\n", steplineno);
   return letat;
 }
 
